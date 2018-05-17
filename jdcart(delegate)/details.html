@@ -1,0 +1,70 @@
+<!DOCTYPE html>
+<html>
+
+	<head>
+		<meta charset="UTF-8">
+		<title></title>
+	</head>
+
+	<body>
+		<div class="goodsinfo">
+			<div class="p-img">
+				<a href="##"><img class="loadimg" src="images/59f15b82Nae0ef9f3.jpg!q90!cc_170x170.webp" alt="" sid="5"></a>
+			</div>
+			<div class="p-name">
+				<a class="loadt" href="##">我是新增的台式电脑 (Core i5 处理器/8GB内存/1TB 存储 MGEN2CH/A)</a>
+			</div>
+			<div class="p-price"><strong><em>￥</em><i class="loadpcp">5200.00</i></strong></div>
+			<div class="p-btn">
+				<input type="text" id="count" value="1" />
+				<a href="javascript:void(0)"><b></b>加入购物车</a>
+			</div>
+		</div>
+		<script src="js/jquery-1.11.3.js" type="text/javascript" charset="utf-8"></script>
+		<script src="js/jquery.cookie.js" type="text/javascript" charset="utf-8"></script>
+		<script type="text/javascript">
+			//第一步思路：将商品的id和数量存放的cookie和数据库里面。
+			//第二步思路：定义两个数组接收存放的数量和id,提前约定存放cookie的名称。
+			var sidarr = [];
+			var numarr = [];
+			function getcookievalue(){
+				if(getCookie('cartsid')){//cartsid：cookie里面id的名称
+					sidarr=getCookie('cartsid').split(',');
+				}
+				
+				if(getCookie('cartnum')){//cartnum：cookie里面数量的名称
+					numarr=getCookie('cartnum').split(',');
+				}
+			}
+			
+			//第三步思路：通过判断商品的id是否存在上面获取的sid里面。
+			//如果存在，已经在购物车里面了，否则将商品sid添加到cookie里面
+			$('.p-btn a').on('click', function() {
+				var sid = $(this).parents('.goodsinfo').find('.loadimg').attr('sid');//当前按钮对应图片的sid
+				console.log(sid)
+				getcookievalue();//获取商品的id和数量,放到对应的数组中,利用数组进行匹配
+				if ($.inArray(sid, sidarr) != -1) {//是否存在cookie中
+					//将之前的数据和当前存的数据相加，存放cookie里面
+					if(getCookie('cartnum')==''){
+						var num=parseInt($('#count').val());
+						numarr[$.inArray(sid,sidarr)]=num;
+						addCookie('cartnum', numarr.toString(), 7);//修改后的结果
+						sidarr[$.inArray(sid,sidarr)]=sid;//将当前id添加到对应的位置。
+        				addCookie('cartsid', sidarr.toString(), 7);//将整个数组添加到cookie
+					}else{
+						var num=parseInt(numarr[$.inArray(sid,sidarr)])+parseInt($('#count').val());
+						numarr[$.inArray(sid,sidarr)]=num;
+						addCookie('cartnum', numarr.toString(), 7);//修改后的结果
+					}
+					
+				}else{//不存在
+					sidarr.push(sid);//将当前id添加到数组里面。
+        			addCookie('cartsid', sidarr.toString(), 7);//将整个数组添加到cookie
+        			numarr.push($('#count').val());//存放输入的数量，默认是1
+        			addCookie('cartnum', numarr.toString(), 7);
+				}
+			});
+		</script>
+	</body>
+
+</html>

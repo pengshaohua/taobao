@@ -1,0 +1,126 @@
+<!DOCTYPE html>
+<html>
+	<head>
+		<meta charset="utf-8" />
+		<title></title>
+		<style type="text/css">
+			body{
+				font-size: 12px;
+				font-family: "微软雅黑";
+			}
+			fieldset{
+				width: 520px;
+				margin: 0 auto;
+			}
+			label{
+				width: 70px;
+				float: left;
+			}
+		</style>
+	</head>
+	<body>
+		<fieldset>
+			<legend>用户注册</legend>
+			<form action="reg.php" method="post">
+				<p>
+					<label for="username">用户名：</label>
+					<input type="text" name="username" id="username"/>
+					<span>(必填，3-15字符长度，支持汉字、字母、数字及_)</span>
+				</p>
+				<p>
+					<label for="password">密码：</label>
+					<input type="password" name="password" id="password"/>
+					<span>(必填，不得少于6位)</span>
+				</p>
+				<p>
+					<label for="repass">密码重复：</label>
+					<input type="password" name="repass" id="repass"/>
+				</p>
+				<p>
+					<label for="email">邮箱：</label>
+					<input type="text" name="email" id="email"/>
+					<span>(必填)</span>
+				</p>
+				<p>
+					<input type="submit" value="注册" name="submit" />
+				</p>
+			</form>
+		</fieldset>
+		<script src="jquery.js" type="text/javascript" charset="utf-8"></script>
+		<script type="text/javascript">
+			//1.表单验证
+			//2.提交注册数据通过name值完成到数据库的提交，注册按钮一样
+			//3.后端通过php获取name值提交的数据
+			//注册的信息放置到数据库里面
+			/*if(isset($_POST['submit'])){//判断按钮是否点击，是否取到按钮的name值。
+				$user=$_POST['username'];//用户名
+				$pass=md5($_POST['password']);//密码
+				$email=$_POST['email'];//邮箱
+				$query="insert admin values(null,'$user','$pass','$email')";
+				mysql_query($query);
+				header('location:login.html');//跳转到login.html页面，注意路径
+				./:当前目录   ../：上一级目录     
+			}*/
+			
+			
+			
+			//检测用户名是否重复--$.ajax()
+			//1.将用户名传给后端--$.ajax()
+			//2.后端验证页面不能直接预览--非法操作
+			/*if(isset($_POST['name']) || isset($_POST['submit'])){
+			 	判断用户名是否给后端了或者点击注册按钮获取用户名
+				$username=@$_POST['name'];//@:容错
+			}else{
+				exit('非法操作');//输出文字，退出程序
+			}*/
+			//3.$query1="select * from admin where username='$username'";检测用户名是否存在于数据库中
+			//4.存在返回前端一个标志，然后前端根据标志进行对象提示。
+	
+	
+	
+	
+			//表单验证-用户名
+			$(function(){
+				var bstop=true;//不通过
+				var usereg=/^([\u4e00-\u9fa5]|[\w\-]){3,15}$/;
+				$('#username').on('blur',function(){
+					var username=$(this).val();//获取用户名值
+					if(username!=''){//检测用户名是否为空
+						if(usereg.test(username)){//检测用户名是否满足正则
+							//将当前的用户名给后端，后端和数据库进行匹配，不管是否存在，后端返回结果
+							$.ajax({
+								type:'post',
+								url:'http://127.0.0.1/js1709/Day%2033/loginregistor/reg.php',
+								data:{
+									name:username//获取用户名给后端
+								},
+								success:function(d){
+									if(d){
+										$('#username').next('span').css('color','red').html('用户名已存在');
+										bstop=true;
+									}else{
+										$('#username').next('span').css('color','green').html('√');
+										bstop=false;
+									}
+								}
+							})
+						}else{
+							$(this).next('span').css('color','red').html('格式不正确');
+							bstop=true;
+						}
+					}else{
+						$(this).next('span').css('color','red').html('用户名不能为空');
+						bstop=true;
+					}
+				});
+				
+				
+				$('form').on('submit',function(){//验证不通过无法提交的
+					if(bstop){
+						return false;//阻止按钮跳转。
+					}
+				});
+			});
+		</script>
+	</body>
+</html>
